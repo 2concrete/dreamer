@@ -8,6 +8,7 @@ type Dream = {
   summary: string;
   uuid: number;
   editing: boolean;
+  showEvents: boolean;
 };
 
 type ContextType = {
@@ -15,6 +16,8 @@ type ContextType = {
   addDream: () => void;
   deleteDream: (uuid: number) => void;
   toggleEditing: (uuid: number, mode: boolean) => void;
+  changeTitle: (uuid: number, newTitle: string) => void;
+  toggleEvents: (uuid: number, mode: boolean) => void;
 };
 
 export const DreamContext = createContext<ContextType | null>(null);

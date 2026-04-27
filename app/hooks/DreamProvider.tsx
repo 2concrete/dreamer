@@ -10,6 +10,7 @@ type Dream = {
   summary: string;
   uuid: number;
   editing: boolean;
+  showEvents: boolean;
 };
 
 export const DreamProvider = ({ children }: { children: ReactNode }) => {
@@ -37,24 +38,51 @@ export const DreamProvider = ({ children }: { children: ReactNode }) => {
       summary: "",
       uuid: Date.now(),
       editing: false,
+      showEvents: false,
     };
 
-    setDreams([...dreams, newDream]);
+    setDreams([newDream, ...dreams]);
   };
 
   const deleteDream = (uuid: number) =>
     setDreams(dreams.filter((dream) => dream.uuid !== uuid));
 
-  const toggleEditing = (uuid: number, mode: boolean) =>
-    dreams.map((dream) => {
-      if (dream.uuid === uuid) {
-        dream.editing = mode;
-      }
-    });
+  const toggleEditing = (uuid: number, mode: boolean) => {
+    setDreams(
+      dreams.map((dream) =>
+        dream.uuid === uuid ? { ...dream, editing: mode } : dream,
+      ),
+    );
+  };
+
+  const changeTitle = (uuid: number, newTitle: string) => {
+    setDreams(
+      dreams.map((dream) =>
+        dream.uuid === uuid
+          ? { ...dream, title: newTitle, editing: false }
+          : dream,
+      ),
+    );
+  };
+
+  const toggleEvents = (uuid: number, mode: boolean) => {
+    setDreams(
+      dreams.map((dream) =>
+        dream.uuid === uuid ? { ...dream, showEvents: mode } : dream,
+      ),
+    );
+  };
 
   return (
     <DreamContext.Provider
-      value={{ dreams, addDream, deleteDream, toggleEditing }}
+      value={{
+        dreams,
+        addDream,
+        deleteDream,
+        toggleEditing,
+        changeTitle,
+        toggleEvents,
+      }}
     >
       {children}
     </DreamContext.Provider>

@@ -7,8 +7,11 @@ import { DreamContext } from "../hooks/DreamContext";
 const NewDream = () => {
   const Context = useContext(DreamContext);
 
-  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (Context?.dreams.some((dream) => dream.title.trim() === "")) {
+      return;
+    }
     Context?.addDream();
   };
 
