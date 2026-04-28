@@ -3,16 +3,16 @@ import { DreamContext } from "../hooks/DreamContext";
 import { motion, AnimatePresence } from "motion/react";
 import { IoIosCheckmark } from "react-icons/io";
 import { IoChevronDown } from "react-icons/io5";
-import { DreamEvents } from "./DreamEvents";
+import { DreamEvents } from "./EventList";
 
 type DreamProps = {
   dream: {
     title: string;
-    snippets: string[];
     summary: string;
-    uuid: number;
+    id: number;
     editing: boolean;
     showEvents: boolean;
+    events: { id: number; text: string }[];
   };
 };
 
@@ -28,15 +28,15 @@ const Dream = ({ dream }: DreamProps) => {
   const handleTitleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newTitle) {
-      Context?.changeTitle(dream.uuid, newTitle);
+      Context?.changeTitle(dream.id, newTitle);
     }
   };
 
   useEffect(() => {
     if (!dream.title) {
-      Context?.toggleEditing(dream.uuid, true);
+      Context?.toggleEditing(dream.id, true);
     }
-  }, [dream.uuid, dream.title]);
+  }, [dream.id, dream.title]);
 
   return (
     <motion.div
@@ -46,10 +46,13 @@ const Dream = ({ dream }: DreamProps) => {
       transition={{ duration: 0.2 }}
       className="flex-col flex"
     >
-      <div className="flex justify-between">
-        <div className="flex items-center gap-1">
+      <div className="flex gap-2">
+        <div className="flex lg:items-center md:items-center items-start gap-1">
           {dream.editing ? (
-            <form className="relative" onSubmit={handleTitleSubmit}>
+            <form
+              className="relative text-nowrap max-w-full"
+              onSubmit={handleTitleSubmit}
+            >
               <motion.button
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -61,14 +64,16 @@ const Dream = ({ dream }: DreamProps) => {
                 <IoIosCheckmark size={30} />
               </motion.button>
               <input
-                className="outline-none w-100"
+                className="outline-none lg:w-100 md:w-100 w-40 max-w-full"
                 placeholder="title"
                 value={newTitle || dream.title}
                 onChange={handleTitleChange}
               />
             </form>
           ) : (
-            <span>{dream.title}</span>
+            <span className="lg:w-100 md:w-70 w-50 text-nowrap overflow-auto">
+              {dream.title}
+            </span>
           )}
           {!dream.editing && (
             <motion.button
@@ -76,22 +81,20 @@ const Dream = ({ dream }: DreamProps) => {
               animate={{ opacity: 1 }}
               whileHover={{ opacity: 0.7 }}
               transition={{ duration: 0.4 }}
-              onClick={() =>
-                Context?.toggleEvents(dream.uuid, !dream.showEvents)
-              }
-              className={`${dream.showEvents && "rotate-360"} rotate-270 transition-all`}
+              onClick={() => Context?.toggleEvents(dream.id, !dream.showEvents)}
+              className={`${dream.showEvents && "rotate-360"} rotate-270 relative top-[5px] lg:top-0 md:top-0 transition-all`}
             >
               <IoChevronDown />
             </motion.button>
           )}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 ml-1">
           <motion.button
             animate={{ opacity: 1 }}
             whileHover={{ opacity: 0.7 }}
             transition={{ duration: 0.4 }}
             className="float-right cursor-pointer"
-            onClick={() => Context?.deleteDream(dream.uuid)}
+            onClick={() => Context?.deleteDream(dream.id)}
           >
             delete
           </motion.button>
@@ -101,7 +104,7 @@ const Dream = ({ dream }: DreamProps) => {
             transition={{ duration: 0.4 }}
             className={`float-right cursor-pointer ${dream.editing && "underline underline-offset-4"}`}
             onClick={() =>
-              dream.title && Context?.toggleEditing(dream.uuid, !dream.editing)
+              dream.title && Context?.toggleEditing(dream.id, !dream.editing)
             }
           >
             edit
@@ -109,15 +112,16 @@ const Dream = ({ dream }: DreamProps) => {
         </div>
       </div>
 
-      <AnimatePresence>
+      <AnimatePresence mode="sync">
         {dream.showEvents && (
           <motion.div
-            initial={{ opacity: 0, height: 0, x: 0 }}
-            animate={{ opacity: 1, height: "auto", x: 10 }}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
+            className="relative left-5"
           >
-            <DreamEvents />
+            <DreamEvents dream={dream} />
           </motion.div>
         )}
       </AnimatePresence>

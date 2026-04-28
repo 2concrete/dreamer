@@ -7,7 +7,7 @@ import { DreamContext } from "../hooks/DreamContext";
 const NewDream = () => {
   const Context = useContext(DreamContext);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (Context?.dreams.some((dream) => dream.title.trim() === "")) {
       return;
@@ -23,7 +23,7 @@ const NewDream = () => {
         animate={{ opacity: 1 }}
         whileHover={{ opacity: 0.7 }}
         transition={{ duration: 0.4 }}
-        className="cursor-pointer"
+        className="cursor-pointer font-extralight"
       >
         new dream
       </motion.button>

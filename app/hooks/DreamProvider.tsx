@@ -4,13 +4,18 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { DreamContext } from "./DreamContext";
 
+type Event = {
+  id: number;
+  text: string;
+};
+
 type Dream = {
   title: string;
-  snippets: string[];
   summary: string;
-  uuid: number;
+  id: number;
   editing: boolean;
   showEvents: boolean;
+  events: Event[];
 };
 
 export const DreamProvider = ({ children }: { children: ReactNode }) => {
@@ -34,41 +39,86 @@ export const DreamProvider = ({ children }: { children: ReactNode }) => {
   const addDream = () => {
     const newDream = {
       title: "",
-      snippets: [],
       summary: "",
-      uuid: Date.now(),
+      id: dreams.length,
       editing: false,
       showEvents: false,
+      events: [],
     };
 
     setDreams([newDream, ...dreams]);
   };
 
-  const deleteDream = (uuid: number) =>
-    setDreams(dreams.filter((dream) => dream.uuid !== uuid));
+  const deleteDream = (id: number) =>
+    setDreams(dreams.filter((dream) => dream.id !== id));
 
-  const toggleEditing = (uuid: number, mode: boolean) => {
+  const toggleEditing = (id: number, mode: boolean) => {
     setDreams(
       dreams.map((dream) =>
-        dream.uuid === uuid ? { ...dream, editing: mode } : dream,
+        dream.id === id ? { ...dream, editing: mode } : dream,
       ),
     );
   };
 
-  const changeTitle = (uuid: number, newTitle: string) => {
+  const changeTitle = (id: number, newTitle: string) => {
     setDreams(
       dreams.map((dream) =>
-        dream.uuid === uuid
-          ? { ...dream, title: newTitle, editing: false }
+        dream.id === id ? { ...dream, title: newTitle, editing: false } : dream,
+      ),
+    );
+  };
+
+  const toggleEvents = (id: number, mode: boolean) => {
+    setDreams(
+      dreams.map((dream) =>
+        dream.id === id ? { ...dream, showEvents: mode } : dream,
+      ),
+    );
+  };
+
+  const addEvent = (id: number, event: string) => {
+    setDreams(
+      dreams.map((dream) =>
+        dream.id === id
+          ? {
+              ...dream,
+              events: [...dream.events, { id: Date.now(), text: event }],
+            }
           : dream,
       ),
     );
   };
 
-  const toggleEvents = (uuid: number, mode: boolean) => {
+  const deleteEvent = (id: number, eventId: number) =>
     setDreams(
       dreams.map((dream) =>
-        dream.uuid === uuid ? { ...dream, showEvents: mode } : dream,
+        dream.id === id
+          ? {
+              ...dream,
+              events: dream.events.filter((e) => e.id !== eventId),
+            }
+          : dream,
+      ),
+    );
+
+  const updateEventOrder = (
+    dreamId: number,
+    draggedIndex: number,
+    dropIndex: number,
+  ) => {
+    setDreams(
+      dreams.map((dream) =>
+        dream.id === dreamId
+          ? {
+              ...dream,
+              events: (() => {
+                const updated = [...dream.events];
+                const [moved] = updated.splice(draggedIndex, 1);
+                updated.splice(dropIndex, 0, moved);
+                return updated;
+              })(),
+            }
+          : dream,
       ),
     );
   };
@@ -82,6 +132,9 @@ export const DreamProvider = ({ children }: { children: ReactNode }) => {
         toggleEditing,
         changeTitle,
         toggleEvents,
+        addEvent,
+        deleteEvent,
+        updateEventOrder,
       }}
     >
       {children}
