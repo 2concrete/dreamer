@@ -8,7 +8,6 @@ import { DreamEvents } from "./EventList";
 type DreamProps = {
   dream: {
     title: string;
-    summary: string;
     id: number;
     editing: boolean;
     showEvents: boolean;
@@ -32,12 +31,6 @@ const Dream = ({ dream }: DreamProps) => {
     }
   };
 
-  useEffect(() => {
-    if (!dream.title) {
-      Context?.toggleEditing(dream.id, true);
-    }
-  }, [dream.id, dream.title]);
-
   return (
     <motion.div
       layout
@@ -46,8 +39,8 @@ const Dream = ({ dream }: DreamProps) => {
       transition={{ duration: 0.2 }}
       className="flex-col flex"
     >
-      <div className="flex gap-2">
-        <div className="flex lg:items-center md:items-center items-start gap-1">
+      <div className="flex gap-2 justify-between w-full">
+        <div className="flex gap-1">
           {dream.editing ? (
             <form
               className="relative text-nowrap max-w-full"
@@ -64,16 +57,14 @@ const Dream = ({ dream }: DreamProps) => {
                 <IoIosCheckmark size={30} />
               </motion.button>
               <input
-                className="outline-none lg:w-100 md:w-100 w-40 max-w-full"
+                className="outline-none max-w-full"
                 placeholder="title"
                 value={newTitle || dream.title}
                 onChange={handleTitleChange}
               />
             </form>
           ) : (
-            <span className="lg:w-100 md:w-70 w-50 text-nowrap overflow-auto">
-              {dream.title}
-            </span>
+            <span className="text-nowrap overflow-auto">{dream.title}</span>
           )}
           {!dream.editing && (
             <motion.button
@@ -82,7 +73,7 @@ const Dream = ({ dream }: DreamProps) => {
               whileHover={{ opacity: 0.7 }}
               transition={{ duration: 0.4 }}
               onClick={() => Context?.toggleEvents(dream.id, !dream.showEvents)}
-              className={`${dream.showEvents && "rotate-360"} rotate-270 relative top-[5px] lg:top-0 md:top-0 transition-all`}
+              className={`${dream.showEvents && "rotate-360"} rotate-270 relative transition-transform top-0.5 cursor-pointer duration-300`}
             >
               <IoChevronDown />
             </motion.button>

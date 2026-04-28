@@ -8,7 +8,6 @@ import { IoIosCheckmark } from "react-icons/io";
 type DreamProps = {
   dream: {
     title: string;
-    summary: string;
     id: number;
     editing: boolean;
     showEvents: boolean;
@@ -31,7 +30,7 @@ export const DreamEvents = ({ dream }: DreamProps) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative text-neutral-300">
       <AnimatePresence mode="sync">
         {dream.events.map((event) => (
           <EventItem key={event.id} dreamId={dream.id} event={event} />

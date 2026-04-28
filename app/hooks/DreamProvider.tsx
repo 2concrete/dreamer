@@ -11,7 +11,6 @@ type Event = {
 
 type Dream = {
   title: string;
-  summary: string;
   id: number;
   editing: boolean;
   showEvents: boolean;
@@ -39,9 +38,8 @@ export const DreamProvider = ({ children }: { children: ReactNode }) => {
   const addDream = () => {
     const newDream = {
       title: "",
-      summary: "",
       id: dreams.length,
-      editing: false,
+      editing: true,
       showEvents: false,
       events: [],
     };
@@ -101,25 +99,23 @@ export const DreamProvider = ({ children }: { children: ReactNode }) => {
       ),
     );
 
-  const updateEventOrder = (
-    dreamId: number,
-    draggedIndex: number,
-    dropIndex: number,
-  ) => {
+  const moveEvent = (id: number, eventId: number, moveUp: boolean) => {
     setDreams(
-      dreams.map((dream) =>
-        dream.id === dreamId
-          ? {
-              ...dream,
-              events: (() => {
-                const updated = [...dream.events];
-                const [moved] = updated.splice(draggedIndex, 1);
-                updated.splice(dropIndex, 0, moved);
-                return updated;
-              })(),
-            }
-          : dream,
-      ),
+      dreams.map((dream) => {
+        if (dream.id !== id) return dream;
+
+        const events = [...dream.events];
+        const idx = events.findIndex((e) => e.id === eventId);
+        if (idx === -1) return dream;
+
+        const newIndex = moveUp ? idx - 1 : idx + 1;
+        if (newIndex < 0 || newIndex >= events.length) return dream;
+
+        const [moved] = events.splice(idx, 1);
+        events.splice(newIndex, 0, moved);
+
+        return { ...dream, events };
+      }),
     );
   };
 
@@ -134,7 +130,7 @@ export const DreamProvider = ({ children }: { children: ReactNode }) => {
         toggleEvents,
         addEvent,
         deleteEvent,
-        updateEventOrder,
+        moveEvent,
       }}
     >
       {children}
