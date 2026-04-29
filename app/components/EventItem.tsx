@@ -9,9 +9,10 @@ type EventItemProps = {
     id: number;
     text: string;
   };
+  isDragging: React.ComponentState;
 };
 
-export const EventItem = ({ dreamId, event }: EventItemProps) => {
+export const EventItem = ({ dreamId, event, isDragging }: EventItemProps) => {
   const Context = useContext(DreamContext);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -24,7 +25,7 @@ export const EventItem = ({ dreamId, event }: EventItemProps) => {
       <span className="cursor-default hover:font-extralight transition-all duration-300">
         {event.text}
       </span>
-      {isHovered && (
+      {isHovered && !isDragging && (
         <div className="flex relative top-0.5">
           <motion.button
             onClick={() => Context?.deleteEvent(dreamId, event.id)}

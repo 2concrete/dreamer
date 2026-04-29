@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState } from "react";
 import { DreamContext } from "../hooks/DreamContext";
 import { motion, AnimatePresence } from "motion/react";
 import { IoIosCheckmark } from "react-icons/io";
@@ -52,7 +52,7 @@ const Dream = ({ dream }: DreamProps) => {
                 whileHover={{ opacity: 0.7 }}
                 transition={{ duration: 0.4 }}
                 type="submit"
-                className="absolute -left-7 -top-[3px] cursor-pointer"
+                className="absolute -left-7 -top-0.75 cursor-pointer"
               >
                 <IoIosCheckmark size={30} />
               </motion.button>

@@ -53,6 +53,8 @@ export const DreamEvents = ({ dream }: DreamProps) => {
     setNewEvent("");
   };
 
+  const [isDragging, setIsDragging] = useState(false);
+
   return (
     <div className="relative text-neutral-300">
       <AnimatePresence mode="sync">
@@ -71,8 +73,14 @@ export const DreamEvents = ({ dream }: DreamProps) => {
               value={event}
               as="div"
               variants={itemVariants}
+              onPointerDown={() => setIsDragging(true)}
+              onPointerUp={() => setIsDragging(false)}
             >
-              <EventItem dreamId={dream.id} event={event} />
+              <EventItem
+                dreamId={dream.id}
+                event={event}
+                isDragging={isDragging}
+              />
             </Reorder.Item>
           ))}
         </Reorder.Group>
@@ -93,7 +101,7 @@ export const DreamEvents = ({ dream }: DreamProps) => {
               whileHover={{ opacity: 0.7 }}
               transition={{ duration: 0.4 }}
               type="submit"
-              className="absolute -left-7 -top-0.25 cursor-pointer"
+              className="absolute -left-7 -top-px cursor-pointer"
             >
               <IoIosCheckmark size={30} />
             </motion.button>
