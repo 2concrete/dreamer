@@ -33,12 +33,13 @@ export const DreamEvents = ({ dream }: DreamProps) => {
     <div className="relative text-neutral-300">
       <AnimatePresence mode="sync">
         <Reorder.Group
+          key="events-list"
           values={dream.events}
           onReorder={(newEvents) => Context?.reorderEvents(dream.id, newEvents)}
           as="div"
         >
           {dream.events.map((event) => {
-            console.log(event.id);
+            console.log(event);
             return (
               <Reorder.Item key={event.id} value={event} as="div">
                 <EventItem dreamId={dream.id} event={event} />
