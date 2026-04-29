@@ -48,7 +48,7 @@ export const DreamEvents = ({ dream }: DreamProps) => {
               whileHover={{ opacity: 0.7 }}
               transition={{ duration: 0.4 }}
               type="submit"
-              className="absolute -left-7 -top-0.75 cursor-pointer"
+              className="absolute -left-7 -top-0.25 cursor-pointer"
             >
               <IoIosCheckmark size={30} />
             </motion.button>
