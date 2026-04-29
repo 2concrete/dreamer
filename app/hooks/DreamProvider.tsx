@@ -75,6 +75,7 @@ export const DreamProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const addEvent = (id: number, event: string) => {
+    if (event.trim() === "") return;
     setDreams(
       dreams.map((dream) =>
         dream.id === id

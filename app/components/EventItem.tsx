@@ -16,16 +16,14 @@ export const EventItem = ({ dreamId, event }: EventItemProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 1 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
+    <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="flex w-fit relative h-6"
     >
-      <span className="cursor-default">{event.text}</span>
+      <span className="cursor-default hover:font-extralight transition-all duration-300">
+        {event.text}
+      </span>
       {isHovered && (
         <div className="flex relative top-0.5">
           <motion.button
@@ -40,6 +38,6 @@ export const EventItem = ({ dreamId, event }: EventItemProps) => {
           </motion.button>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };
