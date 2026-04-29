@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useContext } from "react";
 import { DreamContext } from "../hooks/DreamContext";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, Reorder } from "motion/react";
 import { EventItem } from "./EventItem";
 import { IoIosCheckmark } from "react-icons/io";
 
@@ -32,9 +32,20 @@ export const DreamEvents = ({ dream }: DreamProps) => {
   return (
     <div className="relative text-neutral-300">
       <AnimatePresence mode="sync">
-        {dream.events.map((event) => (
-          <EventItem key={event.id} dreamId={dream.id} event={event} />
-        ))}
+        <Reorder.Group
+          values={dream.events}
+          onReorder={(newEvents) => Context?.reorderEvents(dream.id, newEvents)}
+          as="div"
+        >
+          {dream.events.map((event) => {
+            console.log(event.id);
+            return (
+              <Reorder.Item key={event.id} value={event} as="div">
+                <EventItem dreamId={dream.id} event={event} />
+              </Reorder.Item>
+            );
+          })}
+        </Reorder.Group>
 
         <motion.form
           layout

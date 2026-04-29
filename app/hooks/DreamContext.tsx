@@ -24,7 +24,7 @@ type ContextType = {
   toggleEvents: (id: number, mode: boolean) => void;
   addEvent: (id: number, event: string) => void;
   deleteEvent: (id: number, eventId: number) => void;
-  moveEvent: (id: number, eventId: number, moveUp: boolean) => void;
+  reorderEvents: (id: number, newEvents: Event[]) => void;
 };
 
 export const DreamContext = createContext<ContextType | null>(null);

@@ -80,14 +80,17 @@ export const DreamProvider = ({ children }: { children: ReactNode }) => {
         dream.id === id
           ? {
               ...dream,
-              events: [...dream.events, { id: Date.now(), text: event }],
+              events: [
+                ...dream.events,
+                { id: dream.events.length, text: event },
+              ],
             }
           : dream,
       ),
     );
   };
 
-  const deleteEvent = (id: number, eventId: number) =>
+  const deleteEvent = (id: number, eventId: number) => {
     setDreams(
       dreams.map((dream) =>
         dream.id === id
@@ -98,24 +101,11 @@ export const DreamProvider = ({ children }: { children: ReactNode }) => {
           : dream,
       ),
     );
+  };
 
-  const moveEvent = (id: number, eventId: number, moveUp: boolean) => {
+  const reorderEvents = (id: number, newEvents: Event[]) => {
     setDreams(
-      dreams.map((dream) => {
-        if (dream.id !== id) return dream;
-
-        const events = [...dream.events];
-        const idx = events.findIndex((e) => e.id === eventId);
-        if (idx === -1) return dream;
-
-        const newIndex = moveUp ? idx - 1 : idx + 1;
-        if (newIndex < 0 || newIndex >= events.length) return dream;
-
-        const [moved] = events.splice(idx, 1);
-        events.splice(newIndex, 0, moved);
-
-        return { ...dream, events };
-      }),
+      dreams.map((d) => (d.id === id ? { ...d, events: newEvents } : d)),
     );
   };
 
@@ -130,7 +120,7 @@ export const DreamProvider = ({ children }: { children: ReactNode }) => {
         toggleEvents,
         addEvent,
         deleteEvent,
-        moveEvent,
+        reorderEvents,
       }}
     >
       {children}

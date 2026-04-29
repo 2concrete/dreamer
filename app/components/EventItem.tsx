@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { DreamContext } from "../hooks/DreamContext";
-import { IoIosArrowDown, IoIosArrowUp, IoIosClose } from "react-icons/io";
+import { IoIosClose } from "react-icons/io";
 import { motion } from "motion/react";
 
 type EventItemProps = {
@@ -27,34 +27,14 @@ export const EventItem = ({ dreamId, event }: EventItemProps) => {
     >
       <span className="cursor-default">{event.text}</span>
       {isHovered && (
-        <div className="flex relative -right-1 top-0.5">
-          <motion.button
-            onClick={() => Context?.moveEvent(dreamId, event.id, false)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            whileHover={{ opacity: 0.7 }}
-            transition={{ duration: 0.3 }}
-            className="cursor-pointer top-[1px] w-4"
-          >
-            <IoIosArrowDown size={20} />
-          </motion.button>
-          <motion.button
-            onClick={() => Context?.moveEvent(dreamId, event.id, true)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            whileHover={{ opacity: 0.7 }}
-            transition={{ duration: 0.3 }}
-            className="cursor-pointer top-[1px]"
-          >
-            <IoIosArrowUp size={20} />
-          </motion.button>
+        <div className="flex relative top-0.5">
           <motion.button
             onClick={() => Context?.deleteEvent(dreamId, event.id)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             whileHover={{ opacity: 0.7 }}
             transition={{ duration: 0.3 }}
-            className="cursor-pointer top-[1px] w-6"
+            className="cursor-pointer top-px"
           >
             <IoIosClose size={25} />
           </motion.button>
