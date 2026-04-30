@@ -8,7 +8,7 @@
 
 ##### todo:
 
-- integrate clerk for auth and convex for db
+- integrate clerk for auth and convex for db [done]
 - integrate openai to summarise dreams and give insights on the meaning of dreams
 - host on vercel
 - maybe buy domain but im broke

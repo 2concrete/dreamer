@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-
+import { Id } from "@/convex/_generated/dataModel";
 import { DreamContext } from "./DreamContext";
 
 type Event = {
@@ -11,7 +11,9 @@ type Event = {
 
 type Dream = {
   title: string;
-  id: number;
+  _id?: Id<"dreams">;
+  id?: number;
+  _creationTime?: number;
   editing: boolean;
   showEvents: boolean;
   events: Event[];

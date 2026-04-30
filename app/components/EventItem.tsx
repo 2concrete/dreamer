@@ -2,9 +2,14 @@ import { useContext, useState } from "react";
 import { DreamContext } from "../hooks/DreamContext";
 import { IoIosClose } from "react-icons/io";
 import { motion } from "motion/react";
+import { Id } from "@/convex/_generated/dataModel";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useUser } from "@clerk/nextjs";
 
 type EventItemProps = {
-  dreamId: number;
+  id?: number;
+  _id?: Id<"dreams">;
   event: {
     id: number;
     text: string;
@@ -12,9 +17,19 @@ type EventItemProps = {
   isDragging: React.ComponentState;
 };
 
-export const EventItem = ({ dreamId, event, isDragging }: EventItemProps) => {
+export const EventItem = ({ id, _id, event, isDragging }: EventItemProps) => {
+  const isSignedIn = useUser().isSignedIn;
+  const deleteEvent = useMutation(api.dreams.deleteEvent);
   const Context = useContext(DreamContext);
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleDeleteEvent = () => {
+    if (isSignedIn && _id) {
+      deleteEvent({ dreamId: _id, eventId: event.id });
+    } else if (id) {
+      Context?.deleteEvent(id, event.id);
+    }
+  };
 
   return (
     <div
@@ -25,10 +40,10 @@ export const EventItem = ({ dreamId, event, isDragging }: EventItemProps) => {
       <span className="cursor-default hover:font-extralight transition-all duration-300">
         {event.text}
       </span>
-      {isHovered && !isDragging && (
+      {isHovered && (
         <div className="flex relative top-0.5">
           <motion.button
-            onClick={() => Context?.deleteEvent(dreamId, event.id)}
+            onClick={handleDeleteEvent}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             whileHover={{ opacity: 0.7 }}

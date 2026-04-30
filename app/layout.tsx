@@ -8,9 +8,7 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import "./globals.css";
-import { DreamProvider } from "./hooks/DreamProvider";
-import NewDream from "./components/NewDream";
-import { dark, shadcn } from "@clerk/ui/themes";
+import { shadcn } from "@clerk/ui/themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,17 +55,7 @@ export default function RootLayout({
               </button>
             </Show>
           </span>
-          <DreamProvider>
-            <header className="lg:w-xl md:w-lg sm:w-lg w-auto px-4 mx-auto font-sans lg:mt-16 md:lg-16 sm:lg-16 mt-3">
-              <span className="flex justify-between w-full">
-                <span className="text-lg font-extralight">dreamer</span>
-                <span className="flex gap-4">
-                  <NewDream />
-                </span>
-              </span>
-            </header>
-            {children}
-          </DreamProvider>
+          {children}
         </ClerkProvider>
       </body>
     </html>

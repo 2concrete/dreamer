@@ -4,6 +4,10 @@ import { DreamContext } from "../hooks/DreamContext";
 import { AnimatePresence, motion, Reorder } from "motion/react";
 import { EventItem } from "./EventItem";
 import { IoIosCheckmark } from "react-icons/io";
+import { Id } from "@/convex/_generated/dataModel";
+import { useUser } from "@clerk/nextjs";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const containerVariants = {
   hidden: {},
@@ -28,11 +32,18 @@ const itemVariants = {
 type DreamProps = {
   dream: {
     title: string;
-    id: number;
+    _id?: Id<"dreams">;
+    id?: number;
+    _creationTime?: number;
     editing: boolean;
     showEvents: boolean;
     events: { id: number; text: string }[];
   };
+};
+
+type Event = {
+  id: number;
+  text: string;
 };
 
 export const getDelayTime = (eventCount: number) => {
@@ -40,6 +51,10 @@ export const getDelayTime = (eventCount: number) => {
 };
 
 export const DreamEvents = ({ dream }: DreamProps) => {
+  const isSignedIn = useUser().isSignedIn;
+  const addEvent = useMutation(api.dreams.addEvent);
+  const reorderEvents = useMutation(api.dreams.reorderEvents);
+
   const Context = useContext(DreamContext);
   const [newEvent, setNewEvent] = useState<string>("");
 
@@ -49,8 +64,21 @@ export const DreamEvents = ({ dream }: DreamProps) => {
 
   const handleEventSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    Context?.addEvent(dream.id, newEvent);
-    setNewEvent("");
+    if (isSignedIn && dream._id) {
+      addEvent({ id: dream._id, title: newEvent });
+      setNewEvent("");
+    } else if (dream.id) {
+      Context?.addEvent(dream.id, newEvent);
+      setNewEvent("");
+    }
+  };
+
+  const handleReorderEvents = (newEvents: Event[]) => {
+    if (isSignedIn && dream._id) {
+      reorderEvents({ id: dream._id, newEvents: newEvents });
+    } else if (dream.id) {
+      Context?.reorderEvents(dream.id, newEvents);
+    }
   };
 
   const [isDragging, setIsDragging] = useState(false);
@@ -61,7 +89,7 @@ export const DreamEvents = ({ dream }: DreamProps) => {
         <Reorder.Group
           key="events-list"
           values={dream.events}
-          onReorder={(newEvents) => Context?.reorderEvents(dream.id, newEvents)}
+          onReorder={(newEvents) => handleReorderEvents(newEvents)}
           as="div"
           variants={containerVariants}
           initial="hidden"
@@ -77,7 +105,8 @@ export const DreamEvents = ({ dream }: DreamProps) => {
               onPointerUp={() => setIsDragging(false)}
             >
               <EventItem
-                dreamId={dream.id}
+                _id={dream._id}
+                id={dream.id}
                 event={event}
                 isDragging={isDragging}
               />
