@@ -8,6 +8,7 @@
 
 ##### todo:
 
+- make it so there is no lag in frontend
 - integrate clerk for auth and convex for db [done]
 - integrate openai to summarise dreams and give insights on the meaning of dreams
 - host on vercel
