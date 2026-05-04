@@ -8,7 +8,7 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import "./globals.css";
-import { shadcn } from "@clerk/ui/themes";
+import { dark } from "@clerk/themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +35,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
-        <ClerkProvider appearance={{ theme: shadcn }}>
+        <ClerkProvider appearance={{ theme: dark }}>
           <span className="flex gap-2 text-lg px-1.5 absolute top-0 font-sans font-extralight">
             <Show when="signed-out">
               <SignInButton>
