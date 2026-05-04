@@ -5,9 +5,6 @@ import { IoIosCheckmark } from "react-icons/io";
 import { IoChevronDown } from "react-icons/io5";
 import { DreamEvents } from "./EventList";
 import { Id } from "@/convex/_generated/dataModel";
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
-import { useUser } from "@clerk/nextjs";
 
 type DreamProps = {
   dream: {
@@ -22,53 +19,40 @@ type DreamProps = {
 };
 
 const Dream = ({ dream }: DreamProps) => {
-  const isSignedIn = useUser().isSignedIn;
-  const changeTitle = useMutation(api.dreams.changeDreamTitle);
-  const [newTitle, setNewTitle] = useState<string>("");
-
-  const toggleEditingDb = useMutation(api.dreams.toggleEditing);
-  const deleteDreamDb = useMutation(api.dreams.deleteDream);
-  const toggleEvents = useMutation(api.dreams.toggleEvents);
-
   const Context = useContext(DreamContext);
+  const [titleInput, setTitleInput] = useState(dream.title);
+  // Use _id if available (from Convex), otherwise use id (local)
+  const dreamId = dream._id ?? dream.id;
 
-  const handleDelete = () => {
-    if (isSignedIn && dream._id) {
-      deleteDreamDb({ id: dream._id });
-    } else if (dream.id) {
-      Context?.deleteDream(dream.id);
+  const handleDeleteDream = () => {
+    if (dreamId) {
+      Context?.deleteDream(dreamId);
     }
   };
 
   const handleToggleEditing = () => {
-    if (isSignedIn && dream._id) {
-      toggleEditingDb({ id: dream._id });
-    } else if (dream.id) {
-      Context?.toggleEditing(dream.id, dream.editing);
+    if (dreamId) {
+      Context?.toggleEditing(dreamId, !dream.editing);
     }
   };
 
   const handleToggleEvents = () => {
-    if (isSignedIn && dream._id) {
-      toggleEvents({ id: dream._id, mode: !dream.showEvents });
-    } else if (dream.id) {
-      Context?.toggleEvents(dream.id, dream.editing);
+    if (dreamId) {
+      Context?.toggleEvents(dreamId, !dream.showEvents);
     }
   };
 
-  const handleTitleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleTitleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (newTitle) {
-      if (isSignedIn && dream._id) {
-        changeTitle({ id: dream._id, newTitle: newTitle });
-      } else if (dream.id) {
-        Context?.changeTitle(dream.id, newTitle);
-      }
+    if (!dreamId || !titleInput.trim()) {
+      return;
     }
+    Context?.changeTitle(dreamId, titleInput);
+    setTitleInput(dream.title);
   };
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewTitle(e.target.value);
+    setTitleInput(e.target.value);
   };
 
   return (
@@ -99,8 +83,17 @@ const Dream = ({ dream }: DreamProps) => {
               <input
                 className="outline-none max-w-full"
                 placeholder="title"
-                value={newTitle || dream.title}
+                value={titleInput}
                 onChange={handleTitleChange}
+                onBlur={() => {
+                  if (!dreamId) return;
+                  if (titleInput.trim() && titleInput !== dream.title) {
+                    Context?.changeTitle(dreamId, titleInput);
+                  } else {
+                    setTitleInput(dream.title);
+                  }
+                }}
+                autoFocus
               />
             </form>
           ) : (
@@ -125,7 +118,7 @@ const Dream = ({ dream }: DreamProps) => {
             whileHover={{ opacity: 0.7 }}
             transition={{ duration: 0.4 }}
             className="float-right cursor-pointer"
-            onClick={handleDelete}
+            onClick={handleDeleteDream}
           >
             delete
           </motion.button>

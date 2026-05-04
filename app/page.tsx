@@ -1,22 +1,21 @@
 "use client";
 
-import { ConvexProviderWithClerk } from "convex/react-clerk";
 import DreamList from "./components/DreamList";
+import DreamSync from "./components/DreamSync";
 import { DreamProvider } from "./hooks/DreamProvider";
 import NewDream from "./components/NewDream";
-import { ConvexReactClient } from "convex/react";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
+import ConvexClientProvider from "./components/ConvexClientProvider";
 
 export default function Home() {
-  const convex = new ConvexReactClient(
-    process.env.NEXT_PUBLIC_CONVEX_URL as string,
-  );
+  const { isLoaded } = useUser();
 
   return (
     <div className="lg:w-xl md:w-lg sm:w-lg w-auto px-4 mx-auto font-sans">
-      <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        {useUser().isLoaded && (
+      <ConvexClientProvider>
+        {isLoaded && (
           <DreamProvider>
+            <DreamSync />
             <header className="mt-16">
               <span className="flex justify-between w-full">
                 <span className="text-lg font-extralight">dreamer</span>
@@ -28,7 +27,7 @@ export default function Home() {
             <DreamList />
           </DreamProvider>
         )}
-      </ConvexProviderWithClerk>
+      </ConvexClientProvider>
     </div>
   );
 }

@@ -3,28 +3,17 @@
 import { motion } from "motion/react";
 import { useContext } from "react";
 import { DreamContext } from "../hooks/DreamContext";
-import { useUser } from "@clerk/nextjs";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 
 const NewDream = () => {
-  const isSignedIn = useUser().isSignedIn;
   const Context = useContext(DreamContext);
-  const dreamsDb = useQuery(api.dreams.getDreams);
-  const dreamsLocal = Context?.dreams;
-  const dreams = isSignedIn ? dreamsDb : dreamsLocal;
-  const addDream = useMutation(api.dreams.addDream);
+  const dreams = Context?.dreams;
 
   const handleClick = () => {
     if (dreams?.some((dream) => dream.title.trim() === "")) {
       return;
     }
 
-    if (isSignedIn) {
-      addDream();
-    } else {
-      Context?.addDream();
-    }
+    Context?.addDream();
   };
 
   return (

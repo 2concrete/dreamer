@@ -5,9 +5,6 @@ import { AnimatePresence, motion, Reorder } from "motion/react";
 import { EventItem } from "./EventItem";
 import { IoIosCheckmark } from "react-icons/io";
 import { Id } from "@/convex/_generated/dataModel";
-import { useUser } from "@clerk/nextjs";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 
 const containerVariants = {
   hidden: {},
@@ -51,10 +48,6 @@ export const getDelayTime = (eventCount: number) => {
 };
 
 export const DreamEvents = ({ dream }: DreamProps) => {
-  const isSignedIn = useUser().isSignedIn;
-  const addEvent = useMutation(api.dreams.addEvent);
-  const reorderEvents = useMutation(api.dreams.reorderEvents);
-
   const Context = useContext(DreamContext);
   const [newEvent, setNewEvent] = useState<string>("");
 
@@ -64,20 +57,15 @@ export const DreamEvents = ({ dream }: DreamProps) => {
 
   const handleEventSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isSignedIn && dream._id) {
-      addEvent({ id: dream._id, title: newEvent });
-      setNewEvent("");
-    } else if (dream.id) {
-      Context?.addEvent(dream.id, newEvent);
+    if (dream._id || dream.id) {
+      Context?.addEvent(dream._id ?? dream.id, newEvent);
       setNewEvent("");
     }
   };
 
   const handleReorderEvents = (newEvents: Event[]) => {
-    if (isSignedIn && dream._id) {
-      reorderEvents({ id: dream._id, newEvents: newEvents });
-    } else if (dream.id) {
-      Context?.reorderEvents(dream.id, newEvents);
+    if (dream._id || dream.id) {
+      Context?.reorderEvents(dream._id ?? dream.id, newEvents);
     }
   };
 
