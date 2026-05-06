@@ -19,8 +19,9 @@ export const EventItem = ({ id, _id, event, isDragging }: EventItemProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleDeleteEvent = () => {
-    if (_id || id) {
-      Context?.deleteEvent(_id ?? id, event.id);
+    const dreamId = _id || id;
+    if (dreamId) {
+      Context?.deleteEvent(dreamId, event.id);
     }
   };
 
