@@ -57,15 +57,17 @@ export const DreamEvents = ({ dream }: DreamProps) => {
 
   const handleEventSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (dream._id || dream.id) {
-      Context?.addEvent(dream._id ?? dream.id, newEvent);
+    const dreamId = dream._id || dream.id;
+    if (dreamId) {
+      Context?.addEvent(dreamId, newEvent);
       setNewEvent("");
     }
   };
 
   const handleReorderEvents = (newEvents: Event[]) => {
-    if (dream._id || dream.id) {
-      Context?.reorderEvents(dream._id ?? dream.id, newEvents);
+    const dreamId = dream._id || dream.id;
+    if (dreamId) {
+      Context?.reorderEvents(dreamId, newEvents);
     }
   };
 
